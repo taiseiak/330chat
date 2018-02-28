@@ -1,22 +1,22 @@
 #ifndef CHATWINDOW_H
 #define CHATWINDOW_H
 
-#include <QMainWindow>
+#include "ui_chatwindow.h"
 
-namespace Ui {
-class ChatWindow;
-}
-
-class ChatWindow : public QMainWindow
+class ChatWindow : public QDialog, private Ui::ChatWindow
 {
     Q_OBJECT
 
 public:
-    explicit ChatWindow(QWidget *parent = 0);
-    ~ChatWindow();
+    ChatWindow(QWidget *parent = 0): QDialog(parent) {};
+
+public slots:
+
+private slots:
 
 private:
-    Ui::ChatWindow *ui;
+    QString myNickName;
+    QTextTableFormat tableFormat;
 };
 
-#endif // CHATWINDOW_H
+#endif
