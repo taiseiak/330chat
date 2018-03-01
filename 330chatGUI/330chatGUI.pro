@@ -29,6 +29,3 @@ SOURCES += \
 
 HEADERS += \
         chatwindow.h
-
-FORMS += \
-        chatwindow.ui

@@ -1,22 +1,28 @@
 #ifndef CHATWINDOW_H
 #define CHATWINDOW_H
 
-#include "ui_chatwindow.h"
+#include <QWidget>
 
-class ChatWindow : public QDialog, private Ui::ChatWindow
-{
+class QTextEdit;
+class QPushButton;
+
+class ChatWindow : public QWidget {
+
     Q_OBJECT
 
 public:
-    ChatWindow(QWidget *parent = 0): QDialog(parent) {};
+    ChatWindow(QWidget *parent = 0);
 
 public slots:
 
 private slots:
 
 private:
-    QString myNickName;
-    QTextTableFormat tableFormat;
+    QTextEdit *chatMessages;
+    QTextEdit *messageEdit;
+    QPushButton *emojiButton;
+    QPushButton *userListButton;
+    QPushButton *sendButton;
 };
 
 #endif

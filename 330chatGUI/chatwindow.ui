@@ -61,14 +61,10 @@
       <number>6</number>
      </property>
      <item>
-      <widget class="QLabel" name="label" >
-       <property name="text" >
-        <string>Message:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QLineEdit" name="lineEdit" />
+      <property name="placeholderText">
+        <QString>Send a Message:</Qstring>
+      </property>
      </item>
     </layout>
    </item>
