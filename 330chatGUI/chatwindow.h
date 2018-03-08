@@ -5,6 +5,8 @@
 
 class QTextEdit;
 class QPushButton;
+class QTextTableFormat;
+class QLineEdit;
 
 class ChatWindow : public QWidget {
 
@@ -14,15 +16,18 @@ public:
     ChatWindow(QWidget *parent = 0);
 
 public slots:
+    void appendMessage(const QString &message);
 
 private slots:
+    void returnPressed();
 
 private:
     QTextEdit *chatMessages;
-    QTextEdit *messageEdit;
+    QLineEdit *messageEdit;
     QPushButton *emojiButton;
     QPushButton *userListButton;
     QPushButton *sendButton;
+     QTextTableFormat *tableFormat;
 };
 
 #endif
