@@ -2,6 +2,7 @@
 
 #include "chatwindow.h"
 #include <QtDebug>
+#include <string>
 
 ChatWindow::ChatWindow(QWidget *parent)
     : QWidget(parent){
@@ -10,7 +11,6 @@ ChatWindow::ChatWindow(QWidget *parent)
     // Chat messages
     chatMessages = new QTextEdit();
     chatMessages -> setReadOnly(true);
-    chatMessages -> setPlaceholderText("monkaS");
     chatMessages -> setFocusPolicy(Qt::NoFocus);
 
 
@@ -19,7 +19,6 @@ ChatWindow::ChatWindow(QWidget *parent)
     messageEdit -> setPlaceholderText("Send a Message:");
     messageEdit -> setAlignment(Qt::AlignLeft);
     connect(messageEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
-    messageEdit -> setFocusPolicy(Qt::StrongFocus);
 
     // Emoji button
     emojiButton = new QPushButton();
@@ -36,6 +35,7 @@ ChatWindow::ChatWindow(QWidget *parent)
 
     tableFormat = new QTextTableFormat();
     tableFormat->setBorder(0); // removes boarder from each text
+    tableFormat->setAlignment(Qt::AlignVCenter);
 
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout -> addWidget(chatMessages, 0, 0, 1, 6);
@@ -58,7 +58,7 @@ void ChatWindow::returnPressed() {
     messageEdit -> clear();
 }
 
-void ChatWindow::appendMessage(const QString &message) {
+void ChatWindow::appendMessage(QString &message) {
     if (message.isEmpty()) {
         return;
     }
@@ -66,8 +66,11 @@ void ChatWindow::appendMessage(const QString &message) {
     cursor.movePosition(QTextCursor::End);
     QTextTable *table = cursor.insertTable(1, 1, *tableFormat);
 //table->cellAt(0, 0).firstCursorPosition().insertText('<' + from + "> ");
-    table->cellAt(0, 0).firstCursorPosition().insertText(message);
+    message.replace(QString("FeelsAmazingMan"), QString("<img src=':/images/emotes/FeelsAmazingMan.png'>"));
+    message.replace(QString("D:"), QString("<img src=':/images/emotes/DColon.png'>"));
+    message.replace(QString("FeelsGoodMan"), QString("<img src=':/images/emotes/FeelsGoodMan.png'>"));
+    message.replace(QString("haHAA"), QString("<img src=':/images/emotes/haHAA.png'>"));
+    table->cellAt(0, 0).firstCursorPosition().insertHtml(message);
     QScrollBar *bar = chatMessages->verticalScrollBar();
     bar->setValue(bar->maximum());
-
 }

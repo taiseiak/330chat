@@ -29,3 +29,6 @@ SOURCES += \
 
 HEADERS += \
         chatwindow.h
+
+RESOURCES += \
+    resources.qrc

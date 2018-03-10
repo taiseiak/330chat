@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>emotes/DColon.png</file>
+        <file>emotes/FeelsAmazingMan.png</file>
+        <file>emotes/FeelsGoodMan.png</file>
+        <file>emotes/haHAA.png</file>
+    </qresource>
+</RCC>

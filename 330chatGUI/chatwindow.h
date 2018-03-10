@@ -16,7 +16,7 @@ public:
     ChatWindow(QWidget *parent = 0);
 
 public slots:
-    void appendMessage(const QString &message);
+    void appendMessage(QString &message);
 
 private slots:
     void returnPressed();
