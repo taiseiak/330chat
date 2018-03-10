@@ -27,7 +27,8 @@ private:
     QPushButton *emojiButton;
     QPushButton *userListButton;
     QPushButton *sendButton;
-     QTextTableFormat *tableFormat;
+    QTextTableFormat *tableFormat;
+    QMap<QString, QString> *emoteMap;
 };
 
 #endif
