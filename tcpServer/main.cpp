@@ -7,8 +7,6 @@
 
 #include <iostream>
 #include <stdlib.h>
-#include <thread>
-#include <vector>
 
 #include "tcpServer.h"
 
@@ -47,14 +45,49 @@ void tcpServer::run()
 
 void tcpServer::echo()
 {
+    // Pause any other new connections to enable a blocking structure to communication
+    this->server->pauseAccepting();
+
     std::cout << "Connecting" << std::endl;
-    qint64 maxSize = Q_INT64_C(32);
-    char data[maxSize];
-    QTcpSocket* socket = server->nextPendingConnection();
+    qint64 maxSize = Q_INT64_C(4);
+    QTcpSocket* socket = this->server->nextPendingConnection();
 
-    socket->write("Hello");
+    // Read into buffer until all data has been read and appended to var message
+    while(true)
+    {
+        QByteArray readBuffer;
 
-    // TODO: Figure out how to allow echoing to work
+        if(socket->waitForReadyRead())
+        {
+            QByteArray message;
+            while(true)
+            {
+                readBuffer = socket->read(maxSize);
+
+                if(readBuffer.isEmpty())
+                {
+                    break;
+                }
+
+                message.append(readBuffer);
+            }
+
+            // Write back to server what was read
+            QString messageString(message);
+            qDebug() << messageString;
+
+            // Echo response back
+            socket->write("Echo: ");
+            socket->write(message);
+
+            socket->close();
+
+            // Resume accepting connections (unblock)
+            this->server->resumeAccepting();
+
+            break;
+        }
+    }
 }
 
 
