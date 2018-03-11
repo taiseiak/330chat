@@ -5,3 +5,5 @@ On the GUI side, the program now interprets the string and adds emotes automatic
 by parsing the string and looking for the specific sequence of characters that mean the emote. The part of the string is then replaced
 by some html with a png file source. Next steps is to make it look better (the text is either above or below the png) and 
 add more emotes, as well as other functionality such as sound.
+
+On the server side, a lot of time over this week was spent researching how Tcp sockets communicate and the implementation of asynchronous vs syncronous servers. Currently committed to the branch server01 is an implementation of the basic server, which will be easily hooked up to the GUI via the Qt Tcp API. Currently the server imposes a blocking architecture on connections, but supports multiple connections, as has been tested. The ClientHandler is currently in progress to enable async communication as well as simplify the structure quite a bit so we can add our future functionality with ease.
