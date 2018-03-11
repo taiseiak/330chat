@@ -11,3 +11,9 @@ asynchronous vs syncronous servers. Currently committed to the branch server01 i
 will be easily hooked up to the GUI via the Qt Tcp API. Currently the server imposes a blocking architecture on connections, 
 but supports multiple connections, as has been tested. The ClientHandler is currently in progress to enable async 
 communication as well as simplify the structure quite a bit so we can add our future functionality with ease.
+
+We are also implementing file sending, and this week has been mostly figuring out how we are going to communicate from the server to the
+client and implementing it on both sides. Until we have the server and client done, this part can't be completely finished, but 
+so far the file sender's client side is essentially finished by connected by IP and port and creating a TCP socket to send the file across.
+The next step is figuring out the rest of the server side and creating a file receiver on the client side, possibly to display images
+or other files embedded in the gui. 
