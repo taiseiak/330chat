@@ -1,0 +1,7 @@
+Week of March 5th
+
+Since we have gotten how the project is going to be organized with all our team members, we have gotten a lot of progress done on the project.
+On the GUI side, the program now interprets the string and adds emotes automatically when appended to the message box. This is done
+by parsing the string and looking for the specific sequence of characters that mean the emote. The part of the string is then replaced
+by some html with a png file source. Next steps is to make it look better (the text is either above or below the png) and 
+add more emotes, as well as other functionality such as sound.
