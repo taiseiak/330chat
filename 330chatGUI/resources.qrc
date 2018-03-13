@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>emotes/DColon.png</file>
+        <file>emotes/FeelsAmazingMan.png</file>
+        <file>emotes/FeelsGoodMan.png</file>
+        <file>emotes/haHAA.png</file>
+        <file>emotes/emoteTable.txt</file>
+        <file>emotes/Semip.png</file>
+        <file>emotes/ColonD.png</file>
+        <file>emotes/ColonForward.png</file>
+        <file>emotes/ColonO.png</file>
+        <file>emotes/ColonP.png</file>
+        <file>emotes/ColonZ.png</file>
+        <file>emotes/o_O.png</file>
+        <file>emotes/BLeftp.png</file>
+        <file>emotes/ColonLeftp.png</file>
+        <file>emotes/ColonRightp.png</file>
+        <file>emotes/LeftvRightp.png</file>
+        <file>emotes/Rightv3.png</file>
+        <file>emotes/RLeftp.png</file>
+        <file>emotes/SemiLeftp.png</file>
+        <file>emotes/4Head.png</file>
+        <file>emotes/4Head.png.html</file>
+        <file>emotes/ANELE.png</file>
+        <file>emotes/AngryJack.png</file>
+        <file>emotes/ArgieB8.png</file>
+        <file>emotes/ArigatoNas.png</file>
+        <file>emotes/ArsonNoSexy.png</file>
+        <file>emotes/AsianGlow.png</file>
+        <file>emotes/BCWarrior.png</file>
+    </qresource>
+</RCC>

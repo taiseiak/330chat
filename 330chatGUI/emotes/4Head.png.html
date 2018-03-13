@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Twitch Emotes - Bringing a little Kappa to you everyday</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="We aim to provide a simple, clean reference for all the emotes that are available to be used on Twitch. When a new emote is released, you need to know what it is as quick as possible!">
+<meta name="keywords" content="twitch twitchtv justin justin.tv jusintv esports kappa gaming emotes faces avatars emoticons">
+<meta name="author" content="The Community">
+
+<script src="/cdn-cgi/apps/head/NCzRcKaP-wlJNhTvh8wn-dPA-Ag.js"></script><link href="/bootstrap3/css/cosmo/bootstrap.css" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+
+
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+<link href='/favicon.png' rel='shortcut icon' type='image/png'>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<meta property="og:title" content="4Head" />
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://static-cdn.jtvnw.net/emoticons/v1/354/3.0" />
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="112">
+<meta property="og:image:height" content="112">
+</head>
+<body>
+<div class="navbar navbar-default" role="navigation">
+<div class="container">
+<div class="navbar-header">
+<a class="navbar-brand" href="/">Twitch Emotes</a>
+</div>
+<ul class="nav navbar-nav">
+<li><a href="/contact/tip">Add Your Channel </a></li>
+<li><a href="/contact">Contact</a></li>
+<li><a href="/about">About</a></li>
+<li><a href="/apidocs">API</a></li>
+</ul>
+<form class="navbar-form navbar-right" role="search" action="/search" method="GET">
+<div class="form-group">
+<input type="text" class="form-control" name="query" placeholder="Search">
+</div>
+<button type="Search" class="btn btn-default">Search</button>
+</form>
+</div>
+</div>
+<div class="container">
+
+<div class="alert alert-info" role="alert">
+<p><strong>Version 3 Is Live!</strong></p>
+<p>Twitch Emotes version 3 of the site is now live which will better scale to the increasing number of emotes and new features that may be introduced in the future.</p>
+<p>Changes:</p>
+<p><ul>
+<li>Better Performance</li>
+<li>Channel URLs have been changed to use IDs - old URLs will redirect to their new location</li>
+<li>API V3 - check out details on the API page</li>
+<li>Descriptions on global emotes are currently disabled until this feature is reworked</li>
+</ul></p>
+</div>
+<div class="container">
+<div class="well">
+<h2>4Head</h2>
+<p><img src="https://static-cdn.jtvnw.net/emoticons/v1/354/1.0" />&nbsp;&nbsp;<img src="https://static-cdn.jtvnw.net/emoticons/v1/354/2.0" />&nbsp;&nbsp;<img src="https://static-cdn.jtvnw.net/emoticons/v1/354/3.0" /></p>
+
+<hr />
+<button id="emote-graph-button" type="button" class="btn btn-info btn-block">Display Stats</button>
+<p id="emote-graph-button-label" style="display: none;"><strong>Emote usage per day:</strong></p>
+<div id="emote-graph" style="height: 200px; min-width: 100%; display: none; text-align: center;"><i class="fa fa-spinner fa-2x fa-pulse"></i></div>
+<script type="text/javascript">
+      $("#emote-graph-button").click(function(){
+        $("#emote-graph-button").hide();
+        $("#emote-graph-button-label").show();
+        $("#emote-graph").show();
+        
+        loadGraph();
+      });
+
+    var loadGraph = function() {
+      var seriesOptions = [];
+
+      $.getJSON('/api/stats/total/graph?id=354', function (data) {
+        $.each(data, function(i, value) {
+          seriesOptions[i] = {
+            name: value.code,
+            data: value.data,
+            marker : {
+              enabled : true,
+              radius : 3
+            }
+          };
+        });
+        createGraph();
+      });
+
+      Highcharts.theme = {
+        chart: {
+          backgroundColor: '#F5F5F5',
+          zoomType: 'xy'
+        }
+      }
+
+      Highcharts.setOptions(Highcharts.theme);
+
+      var createGraph = function() {
+        $('#emote-graph').highcharts('StockChart', {
+
+          rangeSelector : {
+            enabled: false,
+            buttons: [{
+              type: 'all',
+              text: 'All'
+            }],
+            selected : 1
+          },
+          navigator : {
+            enabled : true
+          },
+          xAxis: {
+            type: 'datetime',
+            minTickInterval: 24 * 3600 * 1000,
+            dateTimeLabelFormats: {
+              day: '%Y-%m-%d',
+            }
+          },
+          scrollbar: {
+            enabled: false
+          },
+          exporting: {
+            enabled: false
+          },
+          yAxis: {
+            min: 0
+          },
+          plotOptions: {
+            line: {
+              gapSize: 2
+            }
+          },
+          series: seriesOptions
+
+        });
+      }
+    }
+    </script>
+</div>
+<div id="ad" style="text-align: center;">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+<ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px;" data-ad-client="ca-pub-7641746017493931" data-ad-slot="3666134087"></ins>
+<script>
+	(adsbygoogle = window.adsbygoogle || []).push({});
+	</script>
+</div>
+<div class="row">
+<div class="col-md-12">
+<p>Emote and badge images are property of Twitch Interactive or their respective owners. Do not reuse without obtaining their permission.</p><p>This is an independent site not run by Twitch. We love the community and wanted to build this resource for them.</p>
+</div>
+</div>
+</div>
+<style>
+      .expandable-emote {
+        cursor: pointer;
+      }
+
+      .emote-popover {
+        min-width: 150px;
+      }
+    </style>
+
+<script src="/bootstrap3/js/bootstrap.js"></script>
+<script src="/js/linkify.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+          if($('#emote-desc').length > 0){
+            var desc = $('#emote-desc'),
+            txt = desc.html(),
+            options = {
+              callback: function( text, href ) {
+                return href ? '<a href="' + href + '" title="' + href + '" target="_blank">' + text + '</a>' : text;
+              }
+            };
+            desc.html(linkify( txt, options ));
+          }
+    });
+
+
+    $(function () {
+
+      // $('[data-toggle="popover"]').popover({
+      //   html: true,
+      //   trigger: 'manual',
+      //   placement: 'bottom',
+      //   template: '<div class="popover" role="tooltip"><div class="arrow"></div><div class="popover-content emote-popover"></div></div>',
+      //   content: function () {
+      //
+      //     var url = '//static-cdn.jtvnw.net/emoticons/v1/'+$(this).data('image-id')+'/3.0';
+      //     var title = $(this).data('tooltip');
+      //
+      //     return '<center><img src="'+url+'"/><br /><small>' + title + '</small></center>';
+      //   }
+      // }).on("mouseenter", function () {
+      //   var _this = this;
+      //   $(this).popover("show");
+      //   $(".popover").on("mouseleave", function () {
+      //     $(_this).popover('hide');
+      //   });
+      // }).on("mouseleave", function () {
+      //   var _this = this;
+      //   setTimeout(function () {
+      //     if (!$(".popover:hover").length) {
+      //       $(_this).popover("hide");
+      //     }
+      //   }, 300);
+      // });
+
+    })
+    </script>
+
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(["setCookieDomain", "*.twitchemotes.com"]);
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://tracker.bashtech.net/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 4]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="https://tracker.bashtech.net/piwik.php?idsite=4" style="border:0;" alt="" /></p></noscript>
+
+
+
+
+</body>
+</html>
