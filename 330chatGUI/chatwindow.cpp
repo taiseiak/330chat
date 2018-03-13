@@ -1,5 +1,5 @@
 #include <QtWidgets>
-
+#include <QtGui>
 #include "chatwindow.h"
 #include <QtDebug>
 #include <string>
@@ -20,9 +20,9 @@ ChatWindow::ChatWindow(QWidget *parent)
     messageEdit -> setAlignment(Qt::AlignLeft);
     connect(messageEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
 
-    // Emoji button
-    emojiButton = new QPushButton();
-    emojiButton -> setText("Emoji");
+//    // Emoji button
+//    emojiButton = new QPushButton();
+//    emojiButton -> setText("Emoji");
 
     // Send button
     sendButton = new QPushButton();
@@ -50,12 +50,11 @@ ChatWindow::ChatWindow(QWidget *parent)
     }
 
 
-
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout -> addWidget(chatMessages, 0, 0, 1, 6);
     mainLayout -> addWidget(messageEdit, 1, 0, 2, 6);
-    mainLayout -> addWidget(emojiButton, 3, 0, 1, 1);
-    mainLayout -> addWidget(userListButton, 3, 1, 1, 1);
+//    mainLayout -> addWidget(emojiButton, 3, 0, 1, 1);
+//    mainLayout -> addWidget(userListButton, 3, 1, 1, 1);
     mainLayout -> addWidget(sendButton, 3, 2, 1, 4);
     setWindowTitle("330Chat");
     setLayout(mainLayout);
@@ -72,6 +71,10 @@ void ChatWindow::returnPressed() {
     messageEdit -> clear();
 }
 
+//void ChatWindow::addEmoticon(QString &emoticon) {
+//    messageEdit->setText(messageEdit->text() + emoticon);
+//}
+
 void ChatWindow::appendMessage(QString &message) {
     if (message.isEmpty()) {
         return;
@@ -85,7 +88,7 @@ void ChatWindow::appendMessage(QString &message) {
         message.replace(i.key(), QString("<img src=':/images/emotes/%1'>").arg(i.value()));
         i++;
     }
-    message.insert(0, QString("<span style='font-size:20pt; vertical-align:middle;"
+    message.insert(0, QString("<span style='font-size:20pt; vertical-align:bottom;"
                               "padding-top: 10px; padding-bottom: 10px;'>"));
     message.append(QString("</span>"));
 

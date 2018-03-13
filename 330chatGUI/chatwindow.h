@@ -7,6 +7,7 @@ class QTextEdit;
 class QPushButton;
 class QTextTableFormat;
 class QLineEdit;
+class QWindow;
 
 class ChatWindow : public QWidget {
 
