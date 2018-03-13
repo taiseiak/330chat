@@ -20,5 +20,4 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp
 
 HEADERS += \
-    tcpServer.h \
-    clienthandler.h
+    tcpServer.h

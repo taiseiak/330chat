@@ -4,11 +4,18 @@
 #include <QHostAddress>
 #include <QString>
 #include <QIODevice>
+#include <QThread>
+#include <QWidget>
+#include <QtCore>
+
 
 #include <iostream>
 #include <stdlib.h>
+#include <queue>
+#include <vector>
 
 #include "tcpServer.h"
+
 
 /**
  * Server tries to listen on any port, at the local address. If new connection
@@ -24,11 +31,8 @@ void tcpServer::run()
 {
     this->server = new QTcpServer(this);
 
-    /* Qt, instead of callbacks, uses signals and slots. Signals are the event,
-     * while slots are the callback. Here we connect a signal (event) to the server
-     * object, which will call echo on event
-    */
-    connect(this->server, SIGNAL(newConnection()), this, SLOT(echo()));
+    connect(this->server, SIGNAL(newConnection()), this, SLOT(handleClient()));
+    connect(this, SIGNAL(newMessage()), this, SLOT(deliverMessage()));
 
     try
     {
@@ -43,50 +47,75 @@ void tcpServer::run()
 }
 
 
-void tcpServer::echo()
+void tcpServer::handleClient()
 {
-    // Pause any other new connections to enable a blocking structure to communication
-    this->server->pauseAccepting();
 
-    std::cout << "Connecting" << std::endl;
-    qint64 maxSize = Q_INT64_C(4);
     QTcpSocket* socket = this->server->nextPendingConnection();
+    qintptr socketDescriptor = socket->socketDescriptor();
 
-    // Read into buffer until all data has been read and appended to var message
+    qDebug() << QString("Handling new client connection: ");
+    this->connections.push_back(socket);
+
+    // Connect all necessary events to new socket connection
+    connect(socket, SIGNAL(readyRead()), this, SLOT(readMessage()));
+}
+
+
+void tcpServer::readMessage()
+{
+    // On call, Qt gives access to the sender through the following method.
+    // See docs at http://doc.qt.io/qt-5/qobject.html#sender
+    QTcpSocket* socket = qobject_cast<QTcpSocket*>(QObject::sender());
+
+    QByteArray buffer;
+    QByteArray message;
+    quint64 maxSize = Q_INT64_C(16);
     while(true)
     {
-        QByteArray readBuffer;
+        buffer = socket->read(maxSize);
 
-        if(socket->waitForReadyRead())
+        if(buffer.isEmpty())
         {
-            QByteArray message;
-            while(true)
-            {
-                readBuffer = socket->read(maxSize);
-
-                if(readBuffer.isEmpty())
-                {
-                    break;
-                }
-
-                message.append(readBuffer);
-            }
-
-            // Write back to server what was read
-            QString messageString(message);
-            qDebug() << messageString;
-
-            // Echo response back
-            socket->write("Echo: ");
-            socket->write(message);
-
-            socket->close();
-
-            // Resume accepting connections (unblock)
-            this->server->resumeAccepting();
-
             break;
         }
+
+        message.append(buffer);
+    }
+
+    qDebug() << message;
+
+    // Send to message queue to enable sending to all clients
+    this->messageQueue.push(message);
+
+    // Emit event signal for server
+    emit newMessage();
+}
+
+
+void tcpServer::deliverMessage()
+{
+    QByteArray message;
+
+    if(this->debug == true)
+    {
+        qDebug() << QString("Attempting to deliver message");
+    }
+
+    if(!this->messageQueue.empty())
+    {
+        message = this->messageQueue.front();
+        this->messageQueue.pop();
+
+        for(auto it = this->connections.begin(); it != this->connections.end(); it++)
+        {
+            // TODO: Implement separate write method here
+            // Also implement disconnect method to ensure no dead connections are being communicated with
+            (*it)->write(message);
+        }
+    }
+    else if(this->debug == true)
+    {
+        qDebug() << QString("No messages available to write.");
     }
 }
 
