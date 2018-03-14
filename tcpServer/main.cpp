@@ -51,13 +51,13 @@ void tcpServer::handleClient()
 {
 
     QTcpSocket* socket = this->server->nextPendingConnection();
-    qintptr socketDescriptor = socket->socketDescriptor();
 
-    qDebug() << QString("Handling new client connection: ");
+    qDebug() << "Handling new client connection: ";
     this->connections.push_back(socket);
 
     // Connect all necessary events to new socket connection
     connect(socket, SIGNAL(readyRead()), this, SLOT(readMessage()));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(onDisconnect()));
 }
 
 
@@ -98,7 +98,7 @@ void tcpServer::deliverMessage()
 
     if(this->debug == true)
     {
-        qDebug() << QString("Attempting to deliver message");
+        qDebug() << "Attempting to deliver message";
     }
 
     if(!this->messageQueue.empty())
@@ -108,14 +108,27 @@ void tcpServer::deliverMessage()
 
         for(auto it = this->connections.begin(); it != this->connections.end(); it++)
         {
-            // TODO: Implement separate write method here
-            // Also implement disconnect method to ensure no dead connections are being communicated with
             (*it)->write(message);
         }
     }
     else if(this->debug == true)
     {
         qDebug() << QString("No messages available to write.");
+    }
+}
+
+
+void tcpServer::onDisconnect()
+{
+    QTcpSocket* socket = qobject_cast<QTcpSocket*>(QObject::sender());
+
+    for(int i = 0; i < this->connections.size(); i++)
+    {
+        if(this->connections[i] == socket)
+        {
+            this->connections.erase(this->connections.begin() + i);
+            qDebug() << "Socket disconnected";
+        }
     }
 }
 

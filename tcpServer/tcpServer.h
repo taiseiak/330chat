@@ -32,6 +32,7 @@ public slots:
     void readMessage();
     void handleClient();
     void deliverMessage();
+    void onDisconnect();
 
 signals:
     void newMessage();
