@@ -38,7 +38,7 @@ void tcpServer::run()
     {
         this->server->listen(this->sHost, this->sPort);
         QString hostString = sHost.toString();
-        std::cout << "Listening on: " << hostString.toStdString() <<"  with any available port" << std::endl;
+        std::cout << "Listening on: " << hostString.toStdString() << " " << this-sPort << std::endl;
     }
     catch(int ExNum)
     {
@@ -52,7 +52,7 @@ void tcpServer::handleClient()
 
     QTcpSocket* socket = this->server->nextPendingConnection();
 
-    qDebug() << "Handling new client connection: ";
+    qDebug() << "Handling new client connection";
     this->connections.push_back(socket);
 
     // Connect all necessary events to new socket connection
@@ -82,7 +82,7 @@ void tcpServer::readMessage()
         message.append(buffer);
     }
 
-    qDebug() << message;
+    qDebug() << "Message read: " << QString(message);
 
     // Send to message queue to enable sending to all clients
     this->messageQueue.push(message);
@@ -95,11 +95,7 @@ void tcpServer::readMessage()
 void tcpServer::deliverMessage()
 {
     QByteArray message;
-
-    if(this->debug == true)
-    {
-        qDebug() << "Attempting to deliver message";
-    }
+    bool sentFlag = false;
 
     if(!this->messageQueue.empty())
     {
@@ -108,7 +104,13 @@ void tcpServer::deliverMessage()
 
         for(auto it = this->connections.begin(); it != this->connections.end(); it++)
         {
+            sentFlag = true;
             (*it)->write(message);
+        }
+
+        if(this->debug == true && sentFlag == true)
+        {
+            qDebug() << "Delivered message";
         }
     }
     else if(this->debug == true)

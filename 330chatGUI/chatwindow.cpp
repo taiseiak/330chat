@@ -1,7 +1,9 @@
 #include <QtWidgets>
 #include <QtGui>
+#include <QTcpSocket>
 #include "chatwindow.h"
 #include <QtDebug>
+#include <QHostAddress>
 #include <string>
 
 ChatWindow::ChatWindow(QWidget *parent)
@@ -59,16 +61,55 @@ ChatWindow::ChatWindow(QWidget *parent)
     setWindowTitle("330Chat");
     setLayout(mainLayout);
 
+    // Client-Server Init
+    QHostAddress host = QHostAddress("::1");
+    quint16 port = 8000;
+    this->socket = new QTcpSocket();
+    this->socket->connectToHost(host, port);
+
+    connect(this->socket, SIGNAL(readyRead()), this, SLOT(readFromServer()));
+
 }
 
 void ChatWindow::returnPressed() {
+    // EDIT THIS
     QString sendText = messageEdit->text();
     if (sendText.isEmpty()) {
         return;
     }
 
-    appendMessage(sendText);
+    QByteArray message;
+    message.append(sendText);
+    this->socket->write(message);
+
+//    Taisei's Stuff
+//    appendMessage(sendText);
+
     messageEdit -> clear();
+}
+
+void ChatWindow::readFromServer()
+{
+    QByteArray buffer;
+    QByteArray message;
+    quint64 maxSize = Q_INT64_C(16);
+
+    while(true)
+    {
+        buffer = this->socket->read(maxSize);
+
+        if(buffer.isEmpty())
+        {
+            break;
+        }
+
+        message.append(buffer);
+    }
+
+    QString finalMessage(message);
+    appendMessage(finalMessage);
+
+    // Signal must not be right on server side. Delivers and doesnt wait for read
 }
 
 //void ChatWindow::addEmoticon(QString &emoticon) {
