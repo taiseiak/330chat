@@ -160,6 +160,7 @@ void tcpServer::deliverMessage()
 
 void tcpServer::onDisconnect()
 {
+    // FIXME: Add new connection. Emit signal to socket that disconnect has occured, so we don't have to do string based stuff
     QTcpSocket* socket = qobject_cast<QTcpSocket*>(QObject::sender());
 
     // Notify client to delete from userlist
