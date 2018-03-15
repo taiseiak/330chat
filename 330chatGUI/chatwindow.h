@@ -23,6 +23,8 @@ public:
     ChatWindow(QWidget *parent = 0);
 
     QTcpSocket* socket;
+    bool isUserName(QString message);
+    bool isDisconnect(QString message);
 
 public slots:
     void appendMessage(QString &message);

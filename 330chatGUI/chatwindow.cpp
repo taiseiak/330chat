@@ -12,8 +12,6 @@ ChatWindow::ChatWindow(QWidget *parent)
     : QWidget(parent){
 
 
-
-
     QStringList envVariables;
     envVariables << "USERNAME" << "USER" << "USERDOMAIN" << "HOSTNAME" << "DOMAINNAME";
 
@@ -95,15 +93,22 @@ ChatWindow::ChatWindow(QWidget *parent)
 
     connect(this->socket, SIGNAL(readyRead()), this, SLOT(readFromServer()));
 
+    // Pass username through to server. Server will parse as username given prefix "!"
+    QByteArray usernameMessage;
+    usernameMessage.append("!");
+    QString argString = QString("/item%1/item%2/item%3/item%4").arg(username).arg(userColor->red()).arg(userColor->green()).arg(userColor->blue());
+    usernameMessage.append(argString);
+    this->socket->write(usernameMessage);
+
 
     // EXAMPLE ADDING AND DELETING USERS
     // WILL NEED TO CONNECT IT UP TO SERVER
-    QString anon1 = QString("/itemANON/item255/item0/item0");
-    QString anon2 = QString("/itemANON2/item0/item255/item0");
-    appendUser(anon1);
-    appendUser(anon2);
-    QString anon2name = QString("ANON2");
-    deleteUser(anon2name);
+//    QString anon1 = QString("/itemANON/item255/item0/item0");
+//    QString anon2 = QString("/itemANON2/item0/item255/item0");
+//    appendUser(anon1);
+//    appendUser(anon2);
+//    QString anon2name = QString("ANON2");
+//    deleteUser(anon2name);
 }
 
 void ChatWindow::returnPressed() {
@@ -149,18 +154,15 @@ void ChatWindow::deleteUser(QString &user) {
     delete items.at(0);
 }
 
-
-
 void ChatWindow::readFromServer()
 {
     QByteArray buffer;
     QByteArray message;
-    quint64 maxSize = Q_INT64_C(16);
+    quint64 maxSize = Q_INT64_C(32);
 
     while(true)
     {
         buffer = this->socket->read(maxSize);
-
         if(buffer.isEmpty())
         {
             break;
@@ -169,10 +171,25 @@ void ChatWindow::readFromServer()
         message.append(buffer);
     }
 
-    QString finalMessage(message);
-    appendMessage(finalMessage);
-
-    // Signal must not be right on server side. Delivers and doesnt wait for read
+    // Check for add user commands and delete user commands
+    QString stringMessage(message);
+    if(this->isUserName(stringMessage))
+    {
+        QString pureUserName = stringMessage.remove(0,1);
+        appendUser(pureUserName);
+    }
+    else if(this->isDisconnect(stringMessage))
+    {
+        QString argUser = stringMessage.remove(0,2);
+        QStringList line = argUser.split("/item", QString::SkipEmptyParts);
+        QString senderName = QString(line[0]);
+        deleteUser(senderName);
+    }
+    else
+    {
+        QString finalMessage(message);
+        appendMessage(finalMessage);
+    }
 }
 
 void ChatWindow::toggleUserLog() {
@@ -216,4 +233,29 @@ void ChatWindow::appendMessage(QString &message) {
     table->cellAt(0, 1).firstCursorPosition().insertHtml(senderMessage);
     QScrollBar *bar = chatMessages->verticalScrollBar();
     bar->setValue(bar->maximum());
+}
+
+bool ChatWindow::isUserName(QString message)
+{
+    int index = message.indexOf("!");
+    if(index != 0)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool ChatWindow::isDisconnect(QString message)
+{
+    int indexDeletion = message.indexOf("-");
+    int indexUser = message.indexOf("!");
+    if(indexDeletion != 0 && indexUser != 1)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }

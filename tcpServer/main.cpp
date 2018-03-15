@@ -50,7 +50,6 @@ void tcpServer::run()
 
 void tcpServer::handleClient()
 {
-
     QTcpSocket* socket = this->server->nextPendingConnection();
 
     qDebug() << "Handling new client connection";
@@ -59,6 +58,16 @@ void tcpServer::handleClient()
     // Connect all necessary events to new socket connection
     connect(socket, SIGNAL(readyRead()), this, SLOT(readMessage()));
     connect(socket, SIGNAL(disconnected()), this, SLOT(onDisconnect()));
+
+    // Write all current clients online to the new client
+    for(auto it = this->connections.begin(); it != this->connections.end(); it++)
+    {
+        QByteArray currentUser;
+        currentUser.append(QString("!"));
+        currentUser.append((*it)->objectName());
+
+        socket->write(currentUser);
+    }
 }
 
 
@@ -70,7 +79,7 @@ void tcpServer::readMessage()
 
     QByteArray buffer;
     QByteArray message;
-    quint64 maxSize = Q_INT64_C(16);
+    quint64 maxSize = Q_INT64_C(32);
     while(true)
     {
         buffer = socket->read(maxSize);
@@ -83,13 +92,41 @@ void tcpServer::readMessage()
         message.append(buffer);
     }
 
-    qDebug() << "Message read: " << QString(message);
+    QString qStringMessage = QString(message);
+    qDebug() << "Message read: " << qStringMessage;
 
-    // Send to message queue to enable sending to all clients
-    this->messageQueue.push(message);
+    if(this->isUserName(qStringMessage))
+    {
+        QString pureUserName = qStringMessage.remove(0,1);
 
-    // Emit event signal for server
-    emit newMessage();
+        // Alter the object name of the sender socket
+        socket->setObjectName(pureUserName);
+
+        // Called immediately on connection to server, so updates before any messages sent by client
+        // FIXME: Try sending message immediately upon logging in. The event loop should prevent bugged performance (ie sending
+        // a message before userlist updated)
+        this->updateUserList(pureUserName);
+    }
+    else
+    {
+        // Send to message queue to enable sending to all clients
+        this->messageQueue.push(message);
+
+        // Emit event signal for server
+        emit newMessage();
+    }
+}
+
+
+bool tcpServer::isUserName(QString message)
+{
+    int index = message.indexOf("!");
+    if(index != 0)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 
@@ -125,6 +162,18 @@ void tcpServer::onDisconnect()
 {
     QTcpSocket* socket = qobject_cast<QTcpSocket*>(QObject::sender());
 
+    // Notify client to delete from userlist
+    for(auto it = this->connections.begin(); it != this->connections.end(); it++)
+    {
+        QByteArray userToDelete;
+        userToDelete.append(QString("-!"));
+        userToDelete.append(socket->objectName());
+        socket->write(userToDelete);
+
+        (*it)->write(userToDelete);
+    }
+
+    // Delete connection from connection vector
     for(int i = 0; i < this->connections.size(); i++)
     {
         if(this->connections[i] == socket)
@@ -132,6 +181,19 @@ void tcpServer::onDisconnect()
             this->connections.erase(this->connections.begin() + i);
             qDebug() << "Socket disconnected";
         }
+    }
+}
+
+
+void tcpServer::updateUserList(QString socketName)
+{
+    // Write the name of the newly connected user to each client. NOTE: must append twice, ByteArray will mess up ordering on QString concat
+    QByteArray name;
+    name.append("!");
+    name.append(socketName);
+    for(auto it = this->connections.begin(); it != this->connections.end(); it++)
+    {
+        (*it)->write(name);
     }
 }
 

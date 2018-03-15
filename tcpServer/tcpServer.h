@@ -18,9 +18,8 @@ public:
     tcpServer(QHostAddress h, quint16 p, bool debug);
 
     void run();
-
-    // Message messageHandler();
-    // Will return a message object with all necessary information taken from message passed from client
+    bool isUserName(QString message);
+    void updateUserList(QString username);
 
     QHostAddress sHost;
     quint16 sPort;
