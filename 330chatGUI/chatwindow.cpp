@@ -5,10 +5,33 @@
 #include <QtDebug>
 #include <QHostAddress>
 #include <string>
+#include <QRandomGenerator>
+
 
 ChatWindow::ChatWindow(QWidget *parent)
     : QWidget(parent){
 
+
+
+
+    QStringList envVariables;
+    envVariables << "USERNAME" << "USER" << "USERDOMAIN" << "HOSTNAME" << "DOMAINNAME";
+
+    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+    foreach (QString string, envVariables) {
+        if (environment.contains(string)) {
+            username = environment.value(string).toUtf8();
+            break;
+        }
+    }
+
+    if (username.isEmpty()) {
+        username = "unknown";
+    }
+
+    userColor = new QColor(QRandomGenerator::global()->bounded(256),
+                           QRandomGenerator::global()->bounded(256),
+                           QRandomGenerator::global()->bounded(256));
 
     // Chat messages
     chatMessages = new QTextEdit();
@@ -22,10 +45,6 @@ ChatWindow::ChatWindow(QWidget *parent)
     messageEdit -> setAlignment(Qt::AlignLeft);
     connect(messageEdit, SIGNAL(returnPressed()), this, SLOT(returnPressed()));
 
-//    // Emoji button
-//    emojiButton = new QPushButton();
-//    emojiButton -> setText("Emoji");
-
     // Send button
     sendButton = new QPushButton();
     sendButton -> setText("Chat");
@@ -34,6 +53,11 @@ ChatWindow::ChatWindow(QWidget *parent)
     // User List button
     userListButton = new QPushButton();
     userListButton -> setText("Users");
+    connect(userListButton, SIGNAL(released()), this, SLOT(toggleUserLog()));
+
+    // UserLog
+    userlog = new QListWidget();
+    userlog->setFocusPolicy(Qt::NoFocus);
 
     tableFormat = new QTextTableFormat();
     tableFormat->setBorder(0); // removes boarder from each text
@@ -53,13 +77,15 @@ ChatWindow::ChatWindow(QWidget *parent)
 
 
     QGridLayout *mainLayout = new QGridLayout;
-    mainLayout -> addWidget(chatMessages, 0, 0, 1, 6);
-    mainLayout -> addWidget(messageEdit, 1, 0, 2, 6);
-//    mainLayout -> addWidget(emojiButton, 3, 0, 1, 1);
-//    mainLayout -> addWidget(userListButton, 3, 1, 1, 1);
-    mainLayout -> addWidget(sendButton, 3, 2, 1, 4);
+    mainLayout -> addWidget(chatMessages, 1, 0, 1, -1);
+    mainLayout -> addWidget(messageEdit, 2, 0, 1, -1);
+    mainLayout -> addWidget(userListButton, 3, 0, 1, 1);
+    mainLayout -> addWidget(sendButton, 3, 1, 1, 2);
+    mainLayout -> addWidget(userlog, 0, 0, 1, 3);
+    userlog->hide();
     setWindowTitle("330Chat");
     setLayout(mainLayout);
+    setMinimumSize(400, 800);
 
     // Client-Server Init
     QHostAddress host = QHostAddress("::1");
@@ -69,6 +95,15 @@ ChatWindow::ChatWindow(QWidget *parent)
 
     connect(this->socket, SIGNAL(readyRead()), this, SLOT(readFromServer()));
 
+
+    // EXAMPLE ADDING AND DELETING USERS
+    // WILL NEED TO CONNECT IT UP TO SERVER
+    QString anon1 = QString("/itemANON/item255/item0/item0");
+    QString anon2 = QString("/itemANON2/item0/item255/item0");
+    appendUser(anon1);
+    appendUser(anon2);
+    QString anon2name = QString("ANON2");
+    deleteUser(anon2name);
 }
 
 void ChatWindow::returnPressed() {
@@ -77,16 +112,44 @@ void ChatWindow::returnPressed() {
     if (sendText.isEmpty()) {
         return;
     }
+    QString finalSend = QString("/item%1/item%2/item%3/item%4/item%5").arg(username).arg(userColor->red()).arg(userColor->green()).arg(userColor->blue()).arg(sendText);
 
     QByteArray message;
-    message.append(sendText);
+    message.append(finalSend);
     this->socket->write(message);
-
-//    Taisei's Stuff
-//    appendMessage(sendText);
 
     messageEdit -> clear();
 }
+
+void ChatWindow::appendUser(QString &user) {
+
+    if (user.isEmpty()) {
+        return;
+    }
+    QStringList line = user.split("/item", QString::SkipEmptyParts);
+    QString userName = QString(line[0]);
+    int userred = QString(line[1]).toInt();
+    int usergreen = QString(line[2]).toInt();
+    int userblue = QString(line[3]).toInt();
+    QListWidgetItem *item = new QListWidgetItem(userName);
+    item->setTextColor(QColor(userred, usergreen, userblue));
+    userlog->addItem(item);
+}
+
+
+void ChatWindow::deleteUser(QString &user) {
+    if (user.isEmpty()) {
+        return;
+    }
+
+    QList<QListWidgetItem *> items = userlog->findItems(user, Qt::MatchExactly);
+    if (items.isEmpty()) {
+        return;
+    }
+    delete items.at(0);
+}
+
+
 
 void ChatWindow::readFromServer()
 {
@@ -112,28 +175,45 @@ void ChatWindow::readFromServer()
     // Signal must not be right on server side. Delivers and doesnt wait for read
 }
 
-//void ChatWindow::addEmoticon(QString &emoticon) {
-//    messageEdit->setText(messageEdit->text() + emoticon);
-//}
+void ChatWindow::toggleUserLog() {
+    if (userlog->isVisible()) {
+        userlog->hide();
+    } else {
+        userlog->show();
+    }
+}
 
 void ChatWindow::appendMessage(QString &message) {
     if (message.isEmpty()) {
         return;
     }
+    QStringList line = message.split("/item", QString::SkipEmptyParts);
+    QString senderName = QString(line[0]);
+    QString senderred = QString(line[1]);
+    QString sendergreen = QString(line[2]);
+    QString senderblue = QString(line[3]);
+    QString senderMessage = QString(line[4]);
+
+
     QTextCursor cursor(chatMessages->textCursor());
     cursor.movePosition(QTextCursor::End);
-    QTextTable *table = cursor.insertTable(1, 1, *tableFormat);
+    QTextTable *table = cursor.insertTable(1, 2, *tableFormat);
+    QString userFormatted = QString("<span style='font-size:20pt; vertical-align:middle;"
+                              "padding-top: 10px; padding-bottom: 10px;"
+                               "color:rgb(%1, %2, %3);'>%4</span>").arg(senderred).arg(sendergreen).arg(senderblue).arg(senderName);
+
+    table->cellAt(0,0).firstCursorPosition().insertHtml(userFormatted);
 
     QMap<QString, QString>::const_iterator  i = emoteMap->constBegin();
     while (i != emoteMap->constEnd()) {
-        message.replace(i.key(), QString("<img src=':/images/emotes/%1'>").arg(i.value()));
+        senderMessage.replace(i.key(), QString("<img src=':/images/emotes/%1'>").arg(i.value()));
         i++;
     }
-    message.insert(0, QString("<span style='font-size:20pt; vertical-align:bottom;"
+    senderMessage.insert(0, QString("<span style='font-size:20pt; vertical-align:middle;"
                               "padding-top: 10px; padding-bottom: 10px;'>"));
-    message.append(QString("</span>"));
+    senderMessage.append(QString("</span>"));
 
-    table->cellAt(0, 0).firstCursorPosition().insertHtml(message);
+    table->cellAt(0, 1).firstCursorPosition().insertHtml(senderMessage);
     QScrollBar *bar = chatMessages->verticalScrollBar();
     bar->setValue(bar->maximum());
 }

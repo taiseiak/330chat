@@ -3,12 +3,17 @@
 
 #include <QWidget>
 #include <QTcpSocket>
+#include <QListWidget>
 
 class QTextEdit;
 class QPushButton;
 class QTextTableFormat;
 class QLineEdit;
 class QWindow;
+class userLog;
+class QByteArray;
+class QColor;
+class QListWidget;
 
 class ChatWindow : public QWidget {
 
@@ -22,9 +27,12 @@ public:
 public slots:
     void appendMessage(QString &message);
     void readFromServer();
+    void appendUser(QString &user);
+    void deleteUser(QString &user);
 
 private slots:
     void returnPressed();
+    void toggleUserLog();
 
 private:
     QTextEdit *chatMessages;
@@ -34,6 +42,10 @@ private:
     QPushButton *sendButton;
     QTextTableFormat *tableFormat;
     QMap<QString, QString> *emoteMap;
+    QListWidget *userlog;
+    QColor *userColor;
+    QString username;
 };
 
 #endif
+

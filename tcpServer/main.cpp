@@ -7,6 +7,7 @@
 #include <QThread>
 #include <QWidget>
 #include <QtCore>
+#include <QMap>
 
 
 #include <iostream>
