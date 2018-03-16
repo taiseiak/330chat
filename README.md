@@ -39,7 +39,7 @@ Step 7) cd into 330chatGUI
 
 Step 8) run $ qmake 330chatGUI.pro, then $ make
 
-Step 9) run % ./330chatGUI
+Step 9) run $ ./330chatGUI
 
 Note: this will not work since there is no display on ix.
 
