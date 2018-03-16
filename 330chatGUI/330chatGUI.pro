@@ -6,6 +6,8 @@
 
 QT       += core gui widgets network
 
+CONFIG += static
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = 330chatGUI
