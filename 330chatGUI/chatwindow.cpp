@@ -5,7 +5,9 @@
 #include <QtDebug>
 #include <QHostAddress>
 #include <string>
-#include <QRandomGenerator>
+#include <stdio.h>      
+#include <stdlib.h>     
+#include <time.h>  
 
 
 ChatWindow::ChatWindow(QWidget *parent)
@@ -26,10 +28,11 @@ ChatWindow::ChatWindow(QWidget *parent)
     if (username.isEmpty()) {
         username = "unknown";
     }
-
-    userColor = new QColor(QRandomGenerator::global()->bounded(256),
-                           QRandomGenerator::global()->bounded(256),
-                           QRandomGenerator::global()->bounded(256));
+    
+    srand (time(NULL));
+    userColor = new QColor(rand() % 256,
+                           rand() % 256,
+                           rand() % 256);
 
     // Chat messages
     chatMessages = new QTextEdit();
