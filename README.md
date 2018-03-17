@@ -19,6 +19,8 @@ signals and slots, as well as handle all new client connections and deal with th
 connections and removal on disconnect. Worked with the GUI guys to hook up each client to the server and enable them to communicate. 
 Note: I didn't work on the file sharing stuff. All credit for that goes to Jackson.
 
+<b>Jackson VanVuren</b>: Worked on file sharing and GUI. For file sharing, changed the server to allow files to be received and (still in progess) sent back to the client. For the GUI, adding commands to send files, name changing, etc. Also helped communication between GUI and server (for file sharing, when to read messages, etc). Essentially I was involved in both GUI and server, but the initial set up and bulk of each was done by Taisei and Michael, respectively. 
+
 <b> (name): </b>
 
 # HOW TO DEPLOY AND USE THE PROGRAM
