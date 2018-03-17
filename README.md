@@ -21,6 +21,8 @@ Note: I didn't work on the file sharing stuff. All credit for that goes to Jacks
 
 <b>Jackson VanVuren</b>: Worked on file sharing and GUI. For file sharing, changed the server to allow files to be received and (still in progess) sent back to the client. For the GUI, adding commands to send files, name changing, etc. Also helped communication between GUI and server (for file sharing, when to read messages, etc). Essentially I was involved in both GUI and server, but the initial set up and bulk of each was done by Taisei and Michael, respectively. 
 
+<b>Taisei Klasen</b>: Worked on the GUI mostly. Created the widget and layout of the gui, made functions that added text and extracted text from the text box, created function to find the username and choose the color randomely, create the map of all the emotes and added the emotes, added functions to replace the text from the server into correct emote text, added the users showing up in the user box, added functions to show the userbox and close when you click the user button.
+
 <b> (name): </b>
 
 # HOW TO DEPLOY AND USE THE PROGRAM
