@@ -13,6 +13,12 @@ Risk Management: Since there are existing protocols and making the base chat app
 the risk management is to have a working product that is simple and reliable before moving into anything
 that is remotely complex. If we cannot finish the complex features, we will have a working product underneath.
 
+### Individual Contributions:
+<b>Michael Hagel</b>: Iterated on the Tcp server. Wrote code to initialize the server, facilitate reading and writing with custom
+signals and slots, as well as handle all new client connections and deal with their read/write requests and the storage of messages/live
+connections and removal on disconnect. Worked with the GUI guys to hook up each client to the server and enable them to communicate. 
+Note: I didn't work on the file sharing stuff. All credit for that goes to Jackson.
+
 
 # HOW TO DEPLOY AND USE THE PROGRAM
 
