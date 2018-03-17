@@ -19,6 +19,7 @@ signals and slots, as well as handle all new client connections and deal with th
 connections and removal on disconnect. Worked with the GUI guys to hook up each client to the server and enable them to communicate. 
 Note: I didn't work on the file sharing stuff. All credit for that goes to Jackson.
 
+<b> (name): </b>
 
 # HOW TO DEPLOY AND USE THE PROGRAM
 
